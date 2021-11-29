@@ -14,7 +14,7 @@ class Ball(Turtle):
         self.x_move = DISTANCE
         self.y_move = DISTANCE
         self.header = random.choice(ANGLES)
-        self.speed(0)
+        self.move_speed = 0.1
 
     def move(self):
         (x, y) = self.position()
@@ -24,6 +24,11 @@ class Ball(Turtle):
 
     def ybounce(self):
         self.y_move *= -1
+        self.move_speed *= 0.9
 
     def xbounce(self):
+        self.x_move *= -1
+
+    def reset(self):
+        self.goto(0, 0)
         self.x_move *= -1
