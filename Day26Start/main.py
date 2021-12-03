@@ -27,8 +27,14 @@
 import pandas as pd
 
 
-data = pd.read_csv("nato_phonetic_alphabet.csv")
+data = pd.read_csv("./Day26Start/nato_phonetic_alphabet.csv")
 my_dict = {row.letter: row.code for (index, row) in data.iterrows()}
-
-word = input("Enter a word: ").upper()
-print([my_dict[x] for x in word])
+is_on = True
+while is_on:
+    word = input("Enter a word: ").upper()
+    try:
+        print([my_dict[x] for x in word])
+    except KeyError:
+        print('Sorry, only letters in the alphabet please')
+    else:
+        is_on = False
