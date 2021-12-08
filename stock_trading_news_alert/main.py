@@ -5,7 +5,7 @@ STOCK = "TSLA"
 COMPANY_NAME = "Tesla Inc"
 API_KEY = "02WA3LJLGQNKV6ET"
 NEWS_API_KEY = "52255cf86a7540208271a0ca2aa87f5a"
-TWILIO_ACCOUNT_SID = "AK4vaWhaF9b57JG4Ndv9v19D5y7EkcQRwT"
+TWILIO_ACCOUNT_SID = "ACf05e4ecd2e28e38f0a6602cea4931e19"
 
 TWILIO_AUTH_TOKEN = "8d8f3a11ce17b9a566720d0ff17e9929"
 
@@ -14,14 +14,10 @@ def send_message(delta_percent, stock, data):
 
     for item in data:
         account_sid = TWILIO_ACCOUNT_SID
-        # auth_token = os.environ['TWILIO_AUTH_TOKEN']
-        auth_token = TWILIO_AUTH_TOKEN
+        auth_token = os.environ['TWILIO_AUTH_TOKEN']
+        # auth_token = TWILIO_AUTH_TOKEN
         client = Client(account_sid, auth_token)
-        body_str = f"""
-                    {stock}: {"🔺" if delta_percent > 0 else "🔻"}{abs(delta_percent)}%
-                    Headline: {item[0]}. 
-                    Brief: {item[1]}
-                    """
+        body_str = f"{stock}: {'🔺' if delta_percent > 0 else '🔻'}{abs(delta_percent)}%\nHeadline: {item[0]}.\nBrief: {item[1]}"
         message = client.messages \
             .create(
                 body=body_str,
@@ -36,7 +32,7 @@ def get_news(delta_percent, company, stock):
     url = "https://newsapi.org/v2/everything"
     params = {
         "apiKey": NEWS_API_KEY,
-        "q": company,
+        "qInTitle": company,
         "sortBy": "popularity"
     }
     data = requests.get(url, params=params).json()
