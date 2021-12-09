@@ -69,13 +69,13 @@ def delete_pixel(graph_id: str, day_str: str):
 def main():
 
     # create_graph_res = create_graph()
-    # post_pixel_res = post_pixel(
-    #     graph_id="g1", day_str=datetime(year=2021, month=12, day=7).strftime("%Y%m%d"), value=4.0)
-    # update_pixel_res = update_pixel(
-    #     graph_id="g1", day_str=datetime(year=2021, month=12, day=7).strftime("%Y%m%d"), value=2.0)
-    delete_pixel_res = delete_pixel(
-        graph_id="g1", day_str=datetime(year=2021, month=12, day=7).strftime("%Y%m%d"))
-    print(delete_pixel_res.text)
+    post_pixel_res = post_pixel(
+        graph_id="g1", day_str=datetime(year=2021, month=12, day=9).strftime("%Y%m%d"), value=3.0)
+    # # update_pixel_res = update_pixel(
+    # #     graph_id="g1", day_str=datetime(year=2021, month=12, day=7).strftime("%Y%m%d"), value=2.0)
+    # delete_pixel_res = delete_pixel(
+    #     graph_id="g1", day_str=datetime(year=2021, month=12, day=7).strftime("%Y%m%d"))
+    # print(delete_pixel_res.text)
 
 
 if __name__ == '__main__':
