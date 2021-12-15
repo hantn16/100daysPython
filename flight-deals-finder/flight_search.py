@@ -29,7 +29,7 @@ class FlightSearch:
         data = res.json()
         return data["locations"][0]["code"]
 
-    def get_cheapiest_flight(self, to_city, from_city="LON"):
+    def get_cheapiest_flight(self, to_city, from_city="LON", max_stopovers=0):
         url = f"{TEQUILA_ENDPOINT}/v2/search"
         date_from = datetime.now() + timedelta(days=1)
         date_to = datetime.now() + timedelta(days=TIME_DELTA)
@@ -41,13 +41,16 @@ class FlightSearch:
             "nights_in_dst_from": MINLENGTH_OF_STAYIN,
             "nights_in_dst_to": MAXLENGTH_OF_STAYIN,
             "curr": "GBP",
-            "max_stopovers": 0,
+            "max_stopovers": max_stopovers,
             "one_for_city": 1,
             "flight_type": "round"
         }
         res = req.get(url=url, params=params, headers=self.headers)
         try:
             res_data = res.json()["data"][0]
+            routes = res_data["route"]
+            stopover_city_list = [x["cityTo"] for x in routes if x["cityTo"] !=
+                                  res_data["cityFrom"] and x["cityTo"] != res_data["cityTo"]]
             flight_data = FlightData(
                 origin_city=res_data["cityFrom"],
                 origin_city_code=res_data["cityCodeFrom"],
@@ -55,6 +58,8 @@ class FlightSearch:
                 departure_city=res_data["cityTo"],
                 departure_city_code=res_data["cityCodeTo"],
                 departure_airport=res_data["flyTo"],
+                stopover_city=", ".join(stopover_city_list) if len(
+                    stopover_city_list) > 0 else None,
                 price=res_data["price"],
                 out_date=res_data["route"][0]["local_departure"].split("T")[0],
                 return_date=res_data["route"][1]["local_departure"].split("T")[
@@ -63,5 +68,4 @@ class FlightSearch:
             print(f"{flight_data.departure_city}: £{flight_data.price}")
             return flight_data
         except IndexError:
-            print("No flight found")
             return None
