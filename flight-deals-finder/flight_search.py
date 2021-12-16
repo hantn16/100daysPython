@@ -58,6 +58,7 @@ class FlightSearch:
                 departure_city=res_data["cityTo"],
                 departure_city_code=res_data["cityCodeTo"],
                 departure_airport=res_data["flyTo"],
+                info_link=res_data["deep_link"],
                 stopover_city=", ".join(stopover_city_list) if len(
                     stopover_city_list) > 0 else None,
                 price=res_data["price"],

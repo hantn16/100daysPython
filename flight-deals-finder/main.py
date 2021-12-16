@@ -40,12 +40,12 @@ def check_flight():
             msg = template.format(fl.price, fl.origin_city, fl.origin_airport, fl.departure_city,
                                   fl.departure_airport, fl.out_date, fl.return_date, stopover_msg)
             print(msg)
-            link = f"https://www.google.co.uk/flights?hl=en#flt={fl.origin_airport}.{fl.departure_airport}.{fl.out_date}*{fl.departure_airport}.{fl.origin_airport}.{fl.return_date}"
+            link = fl.info_link
             # msg = f"Low price alert! Only £{fl.price} to fly from {fl.origin_city}-{fl.origin_airport} to {fl.departure_city}-{fl.departure_airport}, from {fl.out_date} to {fl.return_date}"
             # nm.send_twilio_message(msg)
             subject = "New Low Price Flight"
             nm.send_emails(lst_address=emails, subject=subject,
-                           content=f"{msg}\n{link}")
+                           content=msg, link=link)
 
 
 def main():

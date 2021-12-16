@@ -13,7 +13,6 @@ class NotificationManager:
     def send_twilio_message(self, message):
         account_sid = TWILIO_ACCOUNT_SID
         auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-        print(auth_token)
         client = Client(account_sid, auth_token)
 
         message = client.messages.create(
@@ -22,13 +21,11 @@ class NotificationManager:
             to='+84397479959'
         )
 
-    def send_emails(self, lst_address, subject, content):
+    def send_emails(self, lst_address, subject, content, link):
 
         gmail_password = os.environ.get('GMAIL_PASSWORD')
-        print(gmail_password)
-        encoded_content = content.encode('UTF-8')
         with smtplib.SMTP("smtp.gmail.com") as conn:
             conn.starttls()
             conn.login(user=my_email, password=gmail_password)
             conn.sendmail(from_addr=my_email, to_addrs=lst_address,
-                          msg=f"Subject:{subject}\n\n{encoded_content}")
+                          msg=f"Subject:{subject}\n\n{content}\n{link}".encode('utf-8'))
