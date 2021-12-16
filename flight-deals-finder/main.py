@@ -24,7 +24,6 @@ def check_flight():
     dm = DataManager()
     sheet_data = dm.get_data()
     emails = dm.get_emails()
-    print(emails)
     fs = FlightSearch()
     nm = NotificationManager()
     for item in sheet_data:
