@@ -1,8 +1,5 @@
 from bs4 import BeautifulSoup
-import pyperclip
-
 import requests
-from pprint import pprint
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 SPOTIFY_CLIENTID = "dfba6fcfeab846d780df1b5a859e4def"
@@ -25,6 +22,7 @@ def main():
                                                    scope="playlist-modify-private",
                                                    show_dialog=True,
                                                    cache_path="musical_time_machine/token.txt"))
+    user_id = sp.current_user()['id']
     song_uris = []
 
     for song in songs:
@@ -34,11 +32,9 @@ def main():
             song_uris.append(results['tracks']['items'][0]['uri'])
         except IndexError:
             print(f"{song} not found in spotify")
-
-    # results = sp.current_user_saved_tracks()
-    # for idx, item in enumerate(results['items']):
-    #     track = item['track']
-    #     print(idx, track['artists'][0]['name'], " – ", track['name'])
+    playlist_name = f"{date} Billboard 100"
+    playlist = sp.user_playlist_create(user_id, playlist_name, public=False)
+    sp.playlist_add_items(playlist['id'], song_uris)
 
 
 if __name__ == '__main__':
