@@ -3,17 +3,20 @@ import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, ElementNotInteractableException
 from selenium.webdriver.chrome.service import Service
 chrome_driver_path = "C:\Development\chromedriver"
 FB_EMAIL = "hantn16@gmail.com"
 FB_PASSWORD = os.environ.get("FB_PASSWORD")
+COCCOC_DIRECTORY = os.environ.get("COCCOC_DIRECTORY")
 
 
 def main():
+    autolike = input("Do you want to auto like? (y/n) ").lower() == "y"
     service = Service(chrome_driver_path)
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = r"C:\Users\Admin\AppData\Local\CocCoc\Browser\Application\browser.exe"
+    print(COCCOC_DIRECTORY)
+    chrome_options.binary_location = COCCOC_DIRECTORY
     driver = webdriver.Chrome(service=service, chrome_options=chrome_options)
     driver.get("https://tinder.com/")
     sleep(2)
@@ -54,6 +57,73 @@ def main():
     # Switch back to Tinder window
     driver.switch_to.window(base_window)
     print(driver.title)
+    sleep(3)
+    # Allow cookies
+    cookies = driver.find_element(
+        by=By.XPATH,
+        value='//*[@id="o-1556761323"]/div/div[2]/div/div/div[1]/button')
+    cookies.click()
+    sleep(3)
+    # Allow location
+    allow_location_button = driver.find_element(
+        by=By.XPATH,
+        value='//*[@id="o-1335420887"]/div/div/div/div/div[3]/button[1]')
+    allow_location_button.click()
+    sleep(3)
+    # Disallow notifications
+    notifications_button = driver.find_element(
+        by=By.XPATH,
+        value='//*[@id="o-1335420887"]/div/div/div/div/div[3]/button[2]')
+    notifications_button.click()
+    sleep(3)
+    # Dismiss Vacinates
+    try:
+        vaccinated_button = driver.find_element(
+            by=By.XPATH,
+            value='//*[@id="o-1335420887"]/div/div/div[1]/div[3]/button[2]')
+        vaccinated_button.click()
+        sleep(2)
+    except NoSuchElementException:
+        sleep(2)
+
+    # Tinder free tier only allows 100 "Likes" per day. If you have a premium account, feel free to change to a while loop.
+    for n in range(5):
+
+        # Add a 1 second delay between likes.
+        sleep(2)
+
+        if autolike:
+            try:
+                like_button = driver.find_element(
+                    by=By.XPATH,
+                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[4]/div/div[4]/button')
+                like_button.click()
+            except ElementClickInterceptedException:
+                try:
+                    match_popup = driver.find_element(
+                        by=By.CSS_SELECTOR,
+                        value=".itsAMatch a")
+                    print(match_popup.text)
+                    match_popup.click()
+                # Catches the cases where the "Like" button has not yet loaded, so wait 2 seconds before retrying.
+                except NoSuchElementException:
+                    sleep(2)
+        else:
+            try:
+                dislike_button = driver.find_element(
+                    by=By.XPATH,
+                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[4]/div/div[2]/button')
+                dislike_button.click()
+            except ElementNotInteractableException:
+                dislike_button = driver.find_element(
+                    by=By.XPATH,
+                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[5]/div/div[2]/button')
+                dislike_button.click()
+            except NoSuchElementException:
+                dislike_button = driver.find_element(
+                    by=By.XPATH,
+                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[5]/div/div[2]/button')
+                dislike_button.click()
 
     driver.quit()
 
