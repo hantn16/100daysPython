@@ -21,20 +21,21 @@ def main():
     driver.get("https://tinder.com/")
     sleep(2)
     login_button = driver.find_element(
-        by=By.XPATH, value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[2]/div/div[3]/div/div/button[2]')
+        by=By.XPATH, value='/html/body/div[1]/div/div[1]/div/div/main/div/div[2]/div/div[3]/div/div/button[2]')
 
+    # '//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[2]/div/div[3]/div/div/button[2]'
     login_button.click()
     sleep(2)
     try:
         fb_login_btn = driver.find_element(
-            by=By.XPATH, value='//*[@id="o-1335420887"]/div/div/div[1]/div/div[3]/span/div[2]/button')
+            by=By.XPATH, value='/html/body/div[2]/div/div/div[1]/div/div[3]/span/div[2]/button')
         fb_login_btn.click()
     except NoSuchElementException:
         more_option_btn = driver.find_element(
-            by=By.XPATH, value='//*[@id="o-1335420887"]/div/div/div[1]/div/div[3]/span/button')
+            by=By.XPATH, value='/html/body/div[2]/div/div/div[1]/div/div[3]/span/button')
         more_option_btn.click()
         fb_login_btn = driver.find_element(
-            by=By.XPATH, value='//*[@id="o-1335420887"]/div/div/div[1]/div/div[3]/span/div[2]/button')
+            by=By.XPATH, value='/html/body/div[2]/div/div/div[1]/div/div[3]/span/div[2]/button')
         fb_login_btn.click()
 
     # Switch to Facebook login window
@@ -61,33 +62,33 @@ def main():
     # Allow cookies
     cookies = driver.find_element(
         by=By.XPATH,
-        value='//*[@id="o-1556761323"]/div/div[2]/div/div/div[1]/button')
+        value='/html/body/div[1]/div/div[2]/div/div/div[1]/button')
     cookies.click()
     sleep(3)
     # Allow location
     allow_location_button = driver.find_element(
         by=By.XPATH,
-        value='//*[@id="o-1335420887"]/div/div/div/div/div[3]/button[1]')
+        value='/html/body/div[2]/div/div/div/div/div[3]/button[1]')
     allow_location_button.click()
     sleep(3)
     # Disallow notifications
     notifications_button = driver.find_element(
         by=By.XPATH,
-        value='//*[@id="o-1335420887"]/div/div/div/div/div[3]/button[2]')
+        value='/html/body/div[2]/div/div/div/div/div[3]/button[2]')
     notifications_button.click()
     sleep(3)
     # Dismiss Vacinates
     try:
         vaccinated_button = driver.find_element(
             by=By.XPATH,
-            value='//*[@id="o-1335420887"]/div/div/div[1]/div[3]/button[2]')
+            value='/html/body/div[2]/div/div/div[1]/div[3]/button[2]')
         vaccinated_button.click()
         sleep(2)
     except NoSuchElementException:
         sleep(2)
 
     # Tinder free tier only allows 100 "Likes" per day. If you have a premium account, feel free to change to a while loop.
-    for n in range(5):
+    for n in range(100):
 
         # Add a 1 second delay between likes.
         sleep(2)
@@ -96,33 +97,97 @@ def main():
             try:
                 like_button = driver.find_element(
                     by=By.XPATH,
-                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[4]/div/div[4]/button')
+                    value='/html/body/div[1]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[4]/div/div[4]/button')
+
                 like_button.click()
-            except ElementClickInterceptedException:
+            except NoSuchElementException:
                 try:
-                    match_popup = driver.find_element(
-                        by=By.CSS_SELECTOR,
-                        value=".itsAMatch a")
-                    print(match_popup.text)
-                    match_popup.click()
+                    like_button = driver.find_element(
+                        by=By.XPATH,
+                        value='/html/body/div[1]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[5]/div/div[4]/button')
+                except NoSuchElementException:
+                    # If out of potential matches
+                    try:
+                        go_global_button = driver.find_element(
+                            by=By.XPATH,
+                            value='//span[text()="Go Global"]/parent::button')
+
+                    except NoSuchElementException:
+                        sleep(1)
+                    else:
+                        sleep(1)
+                        break
+                else:
+                    like_button.click()
+            except ElementClickInterceptedException:
+                # try:
+                #     add_to_homescreen_button = driver.find_element(
+                #         by=By.XPATH,
+                #         value='//button[@data-testid="addToHomeScreen"]')
+                # except NoSuchElementException:
+                #     pass
+                # else:
+                #     pass
+                # finally:
+                #     sleep(2)
+                # If out of potential matches
+                try:
+                    go_global_button = driver.find_element(
+                        by=By.XPATH,
+                        value='//span[text()="Go Global"]/parent::button')
+
+                except NoSuchElementException:
+                    sleep(1)
+                else:
+                    sleep(1)
+                    break
+                # If you're out of likes
+                try:
+                    out_of_likes_h3 = driver.find_element(
+                        by=By.XPATH,
+                        value='//h3[contains(text(),"Out of Likes!")]')
+                except NoSuchElementException:
+                    sleep(2)
+                else:
+                    nothanks_button = driver.find_element(
+                        by=By.XPATH,
+                        value="//span[text()='No Thanks']/parent::button")
+                    nothanks_button.click()
+                    sleep(2)
+                    continue
+                try:
+                    info_label = driver.find_element(
+                        by=By.XPATH,
+                        value="//div[contains(text(),'likes you too!')]"
+                    )
+                    name = info_label.text.replace(" likes you too!", "")
+                    print(name)
+                    message_box = driver.find_element(
+                        by=By.XPATH,
+                        value="//textarea[@placeholder='Say something nice!']")
+                    message_box.send_keys(
+                        f"Xin chào {name}!!! Mình làm quen nhé!!!💖")
+                    sleep(1)
+                    message_box.send_keys(Keys.ENTER)
                 # Catches the cases where the "Like" button has not yet loaded, so wait 2 seconds before retrying.
                 except NoSuchElementException:
+                    print("Loi o day")
                     sleep(2)
         else:
             try:
                 dislike_button = driver.find_element(
                     by=By.XPATH,
-                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[4]/div/div[2]/button')
+                    value='//span[text()="Nope"]/ancestor::button')
                 dislike_button.click()
             except ElementNotInteractableException:
                 dislike_button = driver.find_element(
                     by=By.XPATH,
-                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[5]/div/div[2]/button')
+                    value='/html/body/div[2]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[5]/div/div[2]/button')
                 dislike_button.click()
             except NoSuchElementException:
                 dislike_button = driver.find_element(
                     by=By.XPATH,
-                    value='//*[@id="o-1556761323"]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[5]/div/div[2]/button')
+                    value='/html/body/div[2]/div/div[1]/div/div/main/div/div[1]/div[1]/div/div[5]/div/div[2]/button')
                 dislike_button.click()
 
     driver.quit()
